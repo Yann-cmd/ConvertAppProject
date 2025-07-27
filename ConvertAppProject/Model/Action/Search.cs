@@ -37,7 +37,22 @@ namespace ConvertAppProject.Model.Action
                     fileConversion.GetJsonContext().Update(valuesFiltered);
                     break;
                 case "xml":
+                    IEnumerable<XNode> valuesFilteredXml = [];
+                    IEnumerable<XElement> propertyToFilterXml = fileConversion.GetXmlContext().GetXmlPropertieToFilter();
 
+                    string searchFilterXml = _actionService.ChooseAtributeToApplyAction(fileConversion.GetXmlContext().GetXmlFileAttributes(), "\nSearch by :"); Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write($"\nEnter the value to search by {searchFilterXml} : ");
+                    string valueToFilterXml = Console.ReadLine();
+
+                    valuesFilteredXml = from xmlValue in propertyToFilterXml
+                                        where xmlValue.Element(searchFilterXml).ToString().Contains(valueToFilterXml!, StringComparison.OrdinalIgnoreCase)
+                                        select xmlValue;
+
+                    // if xml empty, end the program
+                    if (!valuesFilteredXml.Any()) return HandleBehaviorWhenSortedFileEmpty();
+
+                    //if xml not empty, do the update
+                    fileConversion.GetXmlContext().Update(valuesFilteredXml);
                     break;
             }
 

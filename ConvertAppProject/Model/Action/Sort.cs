@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ConvertAppProject.Model.Action
 {
@@ -25,6 +26,25 @@ namespace ConvertAppProject.Model.Action
                        select jsonValue into Json
                        orderby Json[searchFilter] descending
                        select Json;
+            }
+            return [];
+        }
+
+        private IEnumerable<XElement> ConditionalXmlSort(string valueToSort, IEnumerable<XElement> propertyToFilter, string searchFilter)
+        {
+            if (valueToSort.ToLower() == "asc")
+            {
+                return from xmlValue in propertyToFilter
+                       select xmlValue into Xml
+                       orderby Xml.Element(searchFilter)?.Value ascending
+                       select Xml;
+            }
+            if (valueToSort.ToLower() == "desc")
+            {
+                return from xmlValue in propertyToFilter
+                       select xmlValue into Xml
+                       orderby Xml.Element(searchFilter)?.Value descending
+                       select Xml;
             }
             return [];
         }
@@ -50,7 +70,20 @@ namespace ConvertAppProject.Model.Action
                     fileConversion.GetJsonContext().Update(valuesFiltered);
                     break;
                 case "xml":
+                    IEnumerable<XNode> valuesFilteredXml = [];
+                    IEnumerable<XElement> propertyToFilterXml = fileConversion.GetXmlContext().GetXmlPropertieToFilter();
+                    string sortFilterXml = _actionService.ChooseAtributeToApplyAction(fileConversion.GetXmlContext().GetXmlFileAttributes(), "\nSort by :");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Write($"\nEnter the value to sort by (ASC or DESC) : ");
+                    string valueToSortXml = Console.ReadLine();
 
+                    valuesFilteredXml = ConditionalXmlSort(valueToSortXml, propertyToFilterXml, sortFilterXml);
+
+                    // if xml empty, end the program
+                    if (!valuesFilteredXml.Any()) return HandleBehaviorWhenSortedFileEmpty();
+
+                    // if xml not empty, do the update
+                    fileConversion.GetXmlContext().Update(valuesFilteredXml);
                     break;
             }
 

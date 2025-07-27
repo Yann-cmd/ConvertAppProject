@@ -17,7 +17,6 @@ namespace ConvertAppProject.Contexts
 
         private string FirstAttributeName { get; set; }
 
-
         public JsonContext(string path) 
         {
             FirstAttributeName = "";

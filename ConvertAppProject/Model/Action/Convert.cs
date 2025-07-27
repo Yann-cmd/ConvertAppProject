@@ -31,11 +31,23 @@ namespace ConvertAppProject.Model.Action
             var formatListWithoutActualOne = from format in ALL_FORMAT where format != defaultFileFormat select format;
             string convertInto = ChooseFormatToConvert(formatListWithoutActualOne);
 
-            Console.WriteLine(convertInto);
-
             switch (convertInto)
             {
                 case "json":
+                    if (defaultFileFormat == "xml")
+                    {
+                        fileConversion.GetXmlContext().RemoveUnwantedPropertiesInXmlFile();
+
+                        string xmlToJson = _actionService.XmlToJson(fileConversion.GetXmlContext().GetXmlFile());
+                        //Console.WriteLine(fileConversion.GetXmlContext().GetXmlFile());
+                        //Console.WriteLine(xmlToJson);
+                        string destinationFolderPath = _conversionService.GetAbsolutePathFrom(CONVERTED_FILE_ENDPATH);
+                        Console.Write($"\nChoose a name for your {convertInto} file : ");
+                        string convertedFileName = Console.ReadLine()!;
+                        string finalFilePath = Path.Combine(destinationFolderPath, $"{convertedFileName}.{convertInto}");
+                        File.WriteAllText(finalFilePath, xmlToJson);
+                        Console.WriteLine($"\nFile created here : {finalFilePath}");
+                    }
                     break;
                 case "xml":
                     if (defaultFileFormat == "json")

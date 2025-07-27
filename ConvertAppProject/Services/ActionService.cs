@@ -1,5 +1,6 @@
 ﻿using ConvertAppProject.Model.Conversion;
 using ConvertAppProject.Tools;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace ConvertAppProject.Services
@@ -28,7 +30,7 @@ namespace ConvertAppProject.Services
             {
                 case JTokenType.Object:
                     var properties = from propertie in ((JObject)token).Properties()
-                                select JsonToXml(propertie.Value, propertie.Name);
+                                     select JsonToXml(propertie.Value, propertie.Name);
                     return new XElement(name, properties);
                 case JTokenType.Array:
                     var items = from item in ((JArray)token)
@@ -38,6 +40,18 @@ namespace ConvertAppProject.Services
                     return new XElement(name, ((JValue)token).Value);
 
             }
+        }
+
+        public string XmlToJson(XElement element)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            using (var reader = element.CreateReader())
+            {
+                xmlDoc.Load(reader);
+            }
+
+            // Conversion XmlDocument → JSON
+            return JsonConvert.SerializeXmlNode(xmlDoc, Newtonsoft.Json.Formatting.Indented, false);
         }
     }
 }

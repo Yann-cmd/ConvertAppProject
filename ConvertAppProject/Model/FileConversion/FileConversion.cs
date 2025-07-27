@@ -17,11 +17,14 @@ namespace ConvertAppProject.Model.Conversion
 
         private JsonContext? JsonContext { get; set; }
 
+        private XmlContext? XmlContext { get; set; }
+
         private string FileToConvertPath { get; set; }
 
         public FileConversion()
         {
             JsonContext = null;
+            XmlContext = null;
             FileToConvertPath = "";
         }
 
@@ -43,6 +46,11 @@ namespace ConvertAppProject.Model.Conversion
         public JsonContext GetJsonContext()
         {
             return JsonContext ?? new("");
+        }
+
+        public XmlContext GetXmlContext()
+        {
+            return XmlContext ?? new("");
         }
 
         public void LaunchConversion()
@@ -69,6 +77,9 @@ namespace ConvertAppProject.Model.Conversion
             {
                 case "json":
                     JsonContext = new(path);
+                    break;
+                case "xml":
+                    XmlContext = new(path);
                     break;
             }
         }

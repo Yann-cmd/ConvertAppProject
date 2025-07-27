@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AllAlbums>
+	<Album>
+		<AlbumId>1</AlbumId>
+		<Title>For Those About To Rock We Salute You</Title>
+	</Album>
+	<Album>
+		<AlbumId>2</AlbumId>
+		<Title>Balls to the Wall</Title>
+	</Album>
+	<Album>
+		<AlbumId>3</AlbumId>
+		<Title>Restless and Wild</Title>
+	</Album>
+	<Album>
+		<AlbumId>4</AlbumId>
+		<Title>Let There Be Rock</Title>
+	</Album>
+	<Album>
+		<AlbumId>5</AlbumId>
+		<Title>Big Ones</Title>
+	</Album>
+</AllAlbums>

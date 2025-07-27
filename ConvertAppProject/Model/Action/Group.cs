@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ConvertAppProject.Model.Action
 {
@@ -35,7 +36,22 @@ namespace ConvertAppProject.Model.Action
                     foreach (var valueFiltered in valuesFiltered) fileConversion.GetJsonContext().DisplayJsonResult(valueFiltered);
                     break;
                 case "xml":
+                    IEnumerable<IGrouping<string, XNode>> valuesFilteredXml = [];
+                    IEnumerable<XElement> propertyToFilterXml = fileConversion.GetXmlContext().GetXmlPropertieToFilter();
 
+                    string groupFilterXml = _actionService.ChooseAtributeToApplyAction(fileConversion.GetXmlContext().GetXmlFileAttributes(), "\nGroup by :");
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    valuesFilteredXml = from xmlValue in propertyToFilterXml
+                                     select xmlValue into Xml
+                                     group Xml by Xml.Element(groupFilterXml)?.Value;
+
+                    // if xml empty, end the program
+                    if (!valuesFilteredXml.Any()) return HandleBehaviorWhenSortedFileEmpty();
+
+                    // if xml not empty, do the update
+                    fileConversion.GetXmlContext().UpdateXmlFile(valuesFilteredXml.SelectMany(group => group));
+                    Console.Write("\n");
+                    foreach (var valueFiltered in valuesFilteredXml) fileConversion.GetXmlContext().DisplayXmlResult(valueFiltered);
                     break;
             }
 
